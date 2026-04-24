@@ -1,17 +1,9 @@
 <script lang="ts">
 	import ActionBar from '$/lib/components/ActionBar.svelte';
 	import { tablesStore } from '$/lib/stores/tablesStore.svelte';
+	import { presetPlayersStore, type PresetPlayer } from '$/lib/stores/presetPlayersStore.svelte';
 	import { goto } from '$app/navigation';
 	import { tick } from 'svelte';
-
-	// Preset players with their avatars (registry = from preset list)
-	let PRESET_PLAYERS = $state([
-		{ id: 'nam', name: 'Nam', avatar: 'nam', playerSource: 'registry' as const },
-		{ id: 'hungnhieu', name: 'Hưng nhiều', avatar: 'hungnhieu', playerSource: 'registry' as const },
-		{ id: 'dungcung', name: 'Dũng cưng', avatar: 'dungcung', playerSource: 'registry' as const },
-		{ id: 'dung', name: 'Dũng', avatar: 'dung', playerSource: 'registry' as const },
-		{ id: 'vinh', name: 'Vinh', avatar: 'vinhxo', playerSource: 'registry' as const }
-	]);
 
 	let inputEl: HTMLInputElement | undefined = $state();
 	let newPlayerInput = $state('');
@@ -91,17 +83,14 @@
 	function confirmAddPlayer() {
 		const name = modalName.trim();
 		if (!name) return;
-		if (PRESET_PLAYERS.some((p) => p.name.toLowerCase() === name.toLowerCase())) return;
+		if (presetPlayersStore.some((p) => p.name.toLowerCase() === name.toLowerCase())) return;
 		const id = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
-		PRESET_PLAYERS = [
-			...PRESET_PLAYERS,
-			{
-				id,
-				name,
-				avatar: modalAvatarUrl || '',
-				playerSource: 'registry' as const
-			}
-		];
+		presetPlayersStore.push({
+			id,
+			name,
+			avatar: modalAvatarUrl || '',
+			playerSource: 'registry' as const
+		});
 		closeAddModal();
 	}
 
@@ -109,7 +98,7 @@
 	const selectedPlayers = $derived([
 		...typedPlayers.map((name) => ({ name: name.toLowerCase(), playerSource: 'typed' as const })),
 		...selectedPresets.map((name) => {
-			const preset = PRESET_PLAYERS.find((p) => p.name === name);
+			const preset = presetPlayersStore.find((p) => p.name === name);
 			return {
 				name: name.toLowerCase(),
 				playerSource: 'registry' as const,
@@ -123,7 +112,7 @@
 	const canSubmit = $derived(playerCount >= 2 && playerCount <= 5);
 
 	// Filtered presets for selection
-	const filteredPresets = $derived(PRESET_PLAYERS.filter((p) => !selectedPresets.includes(p.name)));
+	const filteredPresets = $derived(presetPlayersStore.filter((p) => !selectedPresets.includes(p.name)));
 
 	// Add typed player
 	function addTypedPlayer() {
@@ -140,7 +129,7 @@
 		typedPlayers = typedPlayers.filter((_, i) => i !== index);
 	}
 
-	function addPresetPlayer(preset: (typeof PRESET_PLAYERS)[0]) {
+	function addPresetPlayer(preset: PresetPlayer) {
 		if (playerCount >= 5) return;
 		if (selectedPresets.includes(preset.name)) return;
 		selectedPresets = [...selectedPresets, preset.name];
@@ -404,7 +393,7 @@
 			{#if selectedPresets.length > 0}
 				<div class="flex flex-col gap-2">
 					{#each selectedPresets as name, i}
-						{@const preset = PRESET_PLAYERS.find((p) => p.name === name)}
+						{@const preset = presetPlayersStore.find((p) => p.name === name)}
 						<div
 							class="animate__animated animate__fadeIn flex items-center gap-2 rounded-lg border bg-primary/10 p-2"
 						>

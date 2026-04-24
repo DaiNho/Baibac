@@ -8,6 +8,8 @@
 	import { tablesStore } from '$/lib/stores/tablesStore.svelte';
 	import { untrack } from 'svelte';
 
+	import { presetPlayersStore } from '$/lib/stores/presetPlayersStore.svelte';
+
 	const tableId = $derived(page.params.tableId);
 	const table = $derived(tablesStore.find((t) => t.id === tableId));
 	let showAddPlayerModal = $state(false);
@@ -50,6 +52,16 @@
 			avatar: avatarId,
 			playerSource: 'registry'
 		});
+
+		// Save to preset store as well for future tables
+		if (!presetPlayersStore.some((p) => p.name.toLowerCase() === normalizedName)) {
+			presetPlayersStore.push({
+				id: normalizedName.replace(/\s+/g, '_') + '_' + Date.now(),
+				name: name.trim(),
+				avatar: avatarId,
+				playerSource: 'registry'
+			});
+		}
 	}
 
 	// Get current players for modal

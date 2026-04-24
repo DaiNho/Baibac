@@ -454,19 +454,34 @@
 
 	<!-- Selected Players Summary -->
 	{#if playerCount > 0}
-		<div class="mt-4 rounded-lg border bg-muted/20 p-3">
-			<p class="mb-2 text-xs font-medium text-muted-foreground">
-				Danh sách người chơi ({playerCount}):
-			</p>
-			<div class="flex flex-wrap gap-2">
+		<div class="mt-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-4">
+			<div class="mb-3 flex items-center justify-between">
+				<p class="text-xs font-bold text-primary">
+					Đội hình ra sân ({playerCount}/5)
+				</p>
+				{#if playerCount === 5}
+					<span class="animate__animated animate__bounceIn rounded-full bg-green-500/20 px-2 py-0.5 text-[10px] font-bold text-green-600">ĐỦ TAY! 🔥</span>
+				{/if}
+			</div>
+			<div class="flex flex-wrap gap-4">
 				{#each selectedPlayers as player}
-					<div class="flex items-center gap-1.5 rounded-full border bg-card px-2 py-1 text-xs">
-						<span class="font-medium capitalize">{player.name}</span>
-						{#if player.playerSource === 'typed'}
-							<span class="text-[10px] text-muted-foreground"></span>
-						{:else}
-							<span class="text-[10px] text-green-600"></span>
-						{/if}
+					<div class="animate__animated animate__zoomIn flex flex-col items-center gap-1">
+						<div class="relative flex size-12 items-center justify-center rounded-full border-2 border-primary bg-card shadow-sm transition-transform hover:scale-110">
+							{#if player.playerSource === 'registry' && player.avatar}
+								{#if player.avatar.startsWith('data:') || player.avatar.startsWith('http')}
+									<img src={player.avatar} alt={player.name} class="size-full rounded-full object-cover" />
+								{:else}
+									<img src={`/avatars/${player.avatar}.png`} alt={player.name} class="size-full rounded-full object-cover" />
+								{/if}
+							{:else}
+								<span class="text-lg font-bold text-primary">{player.name.charAt(0).toUpperCase()}</span>
+							{/if}
+							<!-- Tiny badge indicating how they were added -->
+							<div class="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full border-2 border-card bg-muted text-[10px]">
+								{player.playerSource === 'typed' ? '✏️' : '📸'}
+							</div>
+						</div>
+						<span class="max-w-[64px] truncate text-center text-xs font-bold capitalize text-card-foreground">{player.name}</span>
 					</div>
 				{/each}
 			</div>

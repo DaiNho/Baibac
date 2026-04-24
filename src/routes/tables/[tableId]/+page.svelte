@@ -45,7 +45,11 @@
 		const normalizedName = name.toLowerCase();
 		table.players.push(normalizedName);
 		// Registry player = has custom avatar from 12A3 list
-		table.playersWithAvatar.push({ name: normalizedName, avatar: avatarId, playerSource: 'registry' });
+		table.playersWithAvatar.push({
+			name: normalizedName,
+			avatar: avatarId,
+			playerSource: 'registry'
+		});
 	}
 
 	// Get current players for modal
@@ -54,16 +58,6 @@
 
 {#if table}
 	<TotalMoney items={totalRankings} />
-
-	{#if table && table.players.length < 20}
-		<button
-			class="mx-2 flex items-center justify-center gap-2 rounded border border-dashed border-primary/50 py-2 text-sm text-primary hover:bg-primary/10"
-			onclick={() => showAddPlayerModal = true}
-		>
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-			Thêm người chơi
-		</button>
-	{/if}
 
 	<ul class="flex flex-1 flex-col gap-4 overflow-auto">
 		{#each table.games.toReversed() as game, i (game.id)}
@@ -77,11 +71,14 @@
 				/>
 			</div>
 		{:else}
-			<div
-				class="animate__animated animate__fadeIn flex flex-1 flex-col items-center justify-center gap-2 py-20 text-muted-foreground"
-			>
-				<p class="text-sm">Chưa có ván nào ở bàn này</p>
-				<p class="text-xs italic">Hãy nhấn vào nút bên dưới để bắt đầu</p>
+			<div class="animate__animated animate__fadeIn flex flex-1 flex-col items-center justify-center gap-3 py-14 text-center">
+				<div class="flex size-16 items-center justify-center rounded-3xl bg-primary/10 text-3xl shadow-sm transition-transform hover:scale-110">
+					🎲
+				</div>
+				<div class="flex flex-col gap-0.5">
+					<p class="font-semibold text-card-foreground">Chưa có ván nào</p>
+					<p class="text-sm text-muted-foreground">Nhấn nút bên dưới để bắt đầu ván đầu tiên!</p>
+				</div>
 			</div>
 		{/each}
 	</ul>
@@ -90,7 +87,7 @@
 
 	<AddPlayerModal
 		open={showAddPlayerModal}
-		onClose={() => showAddPlayerModal = false}
+		onClose={() => (showAddPlayerModal = false)}
 		onAdd={handleAddPlayer}
 		existingPlayers={currentPlayers}
 	/>

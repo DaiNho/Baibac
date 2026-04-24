@@ -2,6 +2,7 @@
 	import ActionBar from '$/lib/components/ActionBar.svelte';
 	import { tablesStore } from '$/lib/stores/tablesStore.svelte';
 	import { goto } from '$app/navigation';
+	import { tick } from 'svelte';
 
 	// Preset players with their avatars (registry = from preset list)
 	let PRESET_PLAYERS = $state([
@@ -41,6 +42,7 @@
 				video: { facingMode: 'user' },
 				audio: false
 			});
+			await tick(); // Wait for videoEl to be rendered by Svelte
 			if (videoEl) {
 				videoEl.srcObject = cameraStream;
 				videoEl.play();
@@ -490,12 +492,6 @@
 									>{player.name.charAt(0).toUpperCase()}</span
 								>
 							{/if}
-							<!-- Tiny badge indicating how they were added -->
-							<div
-								class="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-card bg-muted text-[10px]"
-							>
-								{player.playerSource === 'typed' ? '' : ''}
-							</div>
 						</div>
 						<span
 							class="max-w-[64px] truncate text-center text-xs font-bold text-card-foreground capitalize"

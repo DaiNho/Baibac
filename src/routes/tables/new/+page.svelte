@@ -139,6 +139,13 @@
 		selectedPresets = selectedPresets.filter((n) => n !== name);
 	}
 
+	function deletePresetPlayer(id: string) {
+		const index = presetPlayersStore.findIndex((p) => p.id === id);
+		if (index !== -1) {
+			presetPlayersStore.splice(index, 1);
+		}
+	}
+
 	function handleCreate() {
 		if (!canSubmit) return;
 
@@ -350,35 +357,83 @@
 			{#if filteredPresets.length > 0}
 				<div class="grid grid-cols-2 gap-2">
 					{#each filteredPresets as preset}
-						<button
-							type="button"
-							onclick={() => addPresetPlayer(preset)}
-							class="flex items-center gap-3 rounded-lg border p-3 text-left transition-all hover:border-primary/50 hover:bg-muted"
-						>
-							{#if preset.avatar && (preset.avatar.startsWith('data:') || preset.avatar.startsWith('http'))}
-								<img
-									src={preset.avatar}
-									alt={preset.name}
-									class="size-10 rounded-full object-cover"
-								/>
-							{:else if preset.avatar}
-								<img
-									src={`/avatars/${preset.avatar}.png`}
-									alt={preset.name}
-									class="size-10 rounded-full object-cover"
-								/>
-							{:else}
-								<div
-									class="flex size-10 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary"
-								>
-									{preset.name.charAt(0).toUpperCase()}
-								</div>
-							{/if}
-							<span class="flex-1 text-sm font-medium text-card-foreground capitalize"
-								>{preset.name}</span
+						{@const isDefaultPlayer = preset.isDefault || ['nam', 'hungnhieu', 'dungcung', 'dung', 'vinh'].includes(preset.id)}
+						{#if isDefaultPlayer}
+							<button
+								type="button"
+								onclick={() => addPresetPlayer(preset)}
+								class="flex items-center gap-3 rounded-lg border p-3 text-left transition-all hover:border-primary/50 hover:bg-muted"
 							>
-							<span class="text-primary">+</span>
-						</button>
+								{#if preset.avatar && (preset.avatar.startsWith('data:') || preset.avatar.startsWith('http'))}
+									<img
+										src={preset.avatar}
+										alt={preset.name}
+										class="size-10 rounded-full object-cover"
+									/>
+								{:else if preset.avatar}
+									<img
+										src={`/avatars/${preset.avatar}.png`}
+										alt={preset.name}
+										class="size-10 rounded-full object-cover"
+									/>
+								{:else}
+									<div
+										class="flex size-10 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary"
+									>
+										{preset.name.charAt(0).toUpperCase()}
+									</div>
+								{/if}
+								<span class="flex-1 text-sm font-medium text-card-foreground capitalize"
+									>{preset.name}</span
+								>
+								<span class="text-primary">+</span>
+							</button>
+						{:else}
+							<div class="relative overflow-hidden rounded-lg border bg-card transition-all hover:border-primary/50">
+								<div class="no-scrollbar flex w-full snap-x snap-mandatory overflow-x-auto">
+									<button
+										type="button"
+										onclick={() => addPresetPlayer(preset)}
+										class="flex w-full shrink-0 snap-start items-center gap-3 p-3 text-left hover:bg-muted"
+									>
+										{#if preset.avatar && (preset.avatar.startsWith('data:') || preset.avatar.startsWith('http'))}
+											<img
+												src={preset.avatar}
+												alt={preset.name}
+												class="size-10 rounded-full object-cover"
+											/>
+										{:else if preset.avatar}
+											<img
+												src={`/avatars/${preset.avatar}.png`}
+												alt={preset.name}
+												class="size-10 rounded-full object-cover"
+											/>
+										{:else}
+											<div
+												class="flex size-10 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary"
+											>
+												{preset.name.charAt(0).toUpperCase()}
+											</div>
+										{/if}
+										<span class="flex-1 text-sm font-medium text-card-foreground capitalize"
+											>{preset.name}</span
+										>
+										<span class="text-primary">+</span>
+									</button>
+									<button
+										type="button"
+										onclick={(e) => {
+											e.stopPropagation();
+											deletePresetPlayer(preset.id);
+										}}
+										class="flex w-16 shrink-0 snap-end items-center justify-center bg-red-500 text-white transition-colors hover:bg-red-600 active:bg-red-700"
+										title="Xóa người chơi này vĩnh viễn"
+									>
+										<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+									</button>
+								</div>
+							</div>
+						{/if}
 					{/each}
 				</div>
 			{:else}

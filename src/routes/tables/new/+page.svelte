@@ -426,7 +426,6 @@
 								</div>
 							{/if}
 							<span class="flex-1 text-sm font-medium text-card-foreground capitalize">{name}</span>
-							<span class="text-xs text-green-600">✅</span>
 							<button
 								type="button"
 								onclick={() => removePresetPlayer(name)}
@@ -460,28 +459,48 @@
 					Đội hình ra sân ({playerCount}/5)
 				</p>
 				{#if playerCount === 5}
-					<span class="animate__animated animate__bounceIn rounded-full bg-green-500/20 px-2 py-0.5 text-[10px] font-bold text-green-600">ĐỦ TAY! 🔥</span>
+					<span
+						class="animate__animated animate__bounceIn rounded-full bg-green-500/20 px-2 py-0.5 text-[10px] font-bold text-green-600"
+						>ĐỦ TAY! 🔥</span
+					>
 				{/if}
 			</div>
 			<div class="flex flex-wrap gap-4">
 				{#each selectedPlayers as player}
 					<div class="animate__animated animate__zoomIn flex flex-col items-center gap-1">
-						<div class="relative flex size-12 items-center justify-center rounded-full border-2 border-primary bg-card shadow-sm transition-transform hover:scale-110">
+						<div
+							class="relative flex size-12 items-center justify-center rounded-full border-2 border-primary bg-card shadow-sm transition-transform hover:scale-110"
+						>
 							{#if player.playerSource === 'registry' && player.avatar}
 								{#if player.avatar.startsWith('data:') || player.avatar.startsWith('http')}
-									<img src={player.avatar} alt={player.name} class="size-full rounded-full object-cover" />
+									<img
+										src={player.avatar}
+										alt={player.name}
+										class="size-full rounded-full object-cover"
+									/>
 								{:else}
-									<img src={`/avatars/${player.avatar}.png`} alt={player.name} class="size-full rounded-full object-cover" />
+									<img
+										src={`/avatars/${player.avatar}.png`}
+										alt={player.name}
+										class="size-full rounded-full object-cover"
+									/>
 								{/if}
 							{:else}
-								<span class="text-lg font-bold text-primary">{player.name.charAt(0).toUpperCase()}</span>
+								<span class="text-lg font-bold text-primary"
+									>{player.name.charAt(0).toUpperCase()}</span
+								>
 							{/if}
 							<!-- Tiny badge indicating how they were added -->
-							<div class="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full border-2 border-card bg-muted text-[10px]">
-								{player.playerSource === 'typed' ? '✏️' : '📸'}
+							<div
+								class="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-card bg-muted text-[10px]"
+							>
+								{player.playerSource === 'typed' ? '' : ''}
 							</div>
 						</div>
-						<span class="max-w-[64px] truncate text-center text-xs font-bold capitalize text-card-foreground">{player.name}</span>
+						<span
+							class="max-w-[64px] truncate text-center text-xs font-bold text-card-foreground capitalize"
+							>{player.name}</span
+						>
 					</div>
 				{/each}
 			</div>

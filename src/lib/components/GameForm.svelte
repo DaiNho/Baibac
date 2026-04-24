@@ -19,7 +19,15 @@
 		onselectedplayerschange: (players: SelectedPlayer[]) => void;
 	};
 
-	const { title, rewards, onchange, onsubmit, table, selectedPlayers, onselectedplayerschange }: Props = $props();
+	const {
+		title,
+		rewards,
+		onchange,
+		onsubmit,
+		table,
+		selectedPlayers,
+		onselectedplayerschange
+	}: Props = $props();
 
 	function updateTitle(value: string) {
 		onchange({ title: value, rewards });
@@ -32,10 +40,12 @@
 	}
 
 	function togglePlayer(name: string, playerSource: 'registry' | 'typed') {
-		const exists = selectedPlayers.find(p => p.name === name && p.playerSource === playerSource);
+		const exists = selectedPlayers.find((p) => p.name === name && p.playerSource === playerSource);
 		if (exists) {
 			if (selectedPlayers.length > 1) {
-				onselectedplayerschange(selectedPlayers.filter(p => !(p.name === name && p.playerSource === playerSource)));
+				onselectedplayerschange(
+					selectedPlayers.filter((p) => !(p.name === name && p.playerSource === playerSource))
+				);
 			}
 		} else {
 			onselectedplayerschange([...selectedPlayers, { name, playerSource }]);
@@ -94,14 +104,10 @@
 	</div>
 
 	<!-- Player Selection -->
-	{#if table && table.players.length > 1}
-		
-	{/if}
+	{#if table && table.players.length > 1}{/if}
 
 	<!-- Typed Players -->
-	{#if selectedPlayers.some(p => p.playerSource === 'typed')}
-		
-	{/if}
+	{#if selectedPlayers.some((p) => p.playerSource === 'typed')}{/if}
 
 	<!-- Rewards -->
 	<ol class="animate__animated animate__fadeIn flex flex-col gap-2">
@@ -127,7 +133,7 @@
 					#{rank + 1}
 				</label>
 
-					{#if isTyped}
+				{#if isTyped}
 					<input
 						value={sp.name}
 						oninput={(e) => {
@@ -181,20 +187,6 @@
 			</li>
 		{/each}
 	</ol>
-
-	<!-- Add typed player button -->
-	{#if table && table.players.length > 0}
-		<button
-			type="button"
-			class="flex items-center justify-center gap-2 rounded border border-dashed border-primary/50 py-2 text-sm text-primary hover:bg-primary/10"
-			onclick={() => {
-				onselectedplayerschange([...selectedPlayers, { name: `Khách ${selectedPlayers.filter(p => p.playerSource === 'typed').length + 1}`, playerSource: 'typed' }]);
-			}}
-		>
-			<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-			Thêm người nhập tên
-		</button>
-	{/if}
 
 	<!-- Hint -->
 	<div class="animate__animated animate__fadeIn flex flex-col gap-1 px-1">

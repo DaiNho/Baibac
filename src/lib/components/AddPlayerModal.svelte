@@ -127,14 +127,27 @@
 
 						{#if useCustomAvatar && capturedImage}
 							<div class="flex flex-col items-center gap-2">
-								<img src={capturedImage} alt="Avatar" class="size-24 rounded-full object-cover" />
-								<button
-									type="button"
-									class="text-xs text-muted-foreground hover:text-foreground"
-									onclick={() => { useCustomAvatar = false; capturedImage = null; }}
-								>
-									Xóa ảnh
-								</button>
+								<div class="relative">
+									<img src={capturedImage} alt="Avatar" class="size-24 rounded-full object-cover" />
+									<!-- Delete button -->
+									<button
+										type="button"
+										class="absolute -top-1 -right-1 flex size-6 items-center justify-center rounded-full bg-red-500 text-white shadow hover:scale-110"
+										onclick={() => { useCustomAvatar = false; capturedImage = null; }}
+										title="Xóa ảnh"
+									>
+										<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+									</button>
+									<!-- Download button -->
+									<a
+										href={capturedImage}
+										download={`avatar_${name || 'player'}.jpg`}
+										title="Tải ảnh về"
+										class="absolute -bottom-1 -left-1 flex size-6 items-center justify-center rounded-full bg-blue-500 text-white shadow transition-transform hover:scale-110 active:scale-95"
+									>
+										<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+									</a>
+								</div>
 							</div>
 						{:else}
 							<div class="flex gap-2">

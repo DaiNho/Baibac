@@ -11,6 +11,9 @@
 
 	function getAvatarSrc(avatar: string) {
 		if (!avatar) return '';
+		if (avatar.startsWith('data:') || avatar.startsWith('http') || avatar.startsWith('blob:')) {
+			return avatar;
+		}
 		if (avatar.startsWith('user_')) {
 			return getAvatarDataUrl(avatar) ?? '';
 		}

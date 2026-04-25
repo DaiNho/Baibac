@@ -26,12 +26,13 @@
 	let canvasEl: HTMLCanvasElement | undefined = $state();
 	let fileInputEl: HTMLInputElement | undefined = $state();
 	let cameraError = $state('');
+	let facingMode: 'user' | 'environment' = $state('user');
 
-	async function openCamera() {
+	async function openCamera(mode: 'user' | 'environment' = facingMode) {
 		cameraError = '';
 		try {
 			cameraStream = await navigator.mediaDevices.getUserMedia({
-				video: { facingMode: 'user' },
+				video: { facingMode: mode },
 				audio: false
 			});
 			await tick(); // Wait for videoEl to be rendered by Svelte
@@ -42,6 +43,12 @@
 		} catch {
 			cameraError = 'Không thể truy cập camera. Hãy cho phép truy cập camera.';
 		}
+	}
+
+	async function flipCamera() {
+		facingMode = facingMode === 'user' ? 'environment' : 'user';
+		stopCamera();
+		await openCamera(facingMode);
 	}
 
 	function stopCamera() {
@@ -665,34 +672,52 @@
 		{#if cameraStream && !modalAvatarUrl}
 			<div class="mb-4 flex flex-col items-center gap-3">
 				<!-- svelte-ignore a11y_media_has_caption -->
-				<video
-					bind:this={videoEl}
-					class="w-full rounded-xl object-cover"
-					style="max-height: 200px;"
-					playsinline
-				></video>
-				<canvas bind:this={canvasEl} class="hidden"></canvas>
-				<button
-					type="button"
-					onclick={capturePhoto}
-					aria-label="Chụp ảnh"
-					class="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 active:scale-95"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						><path
-							d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"
-						/><circle cx="12" cy="13" r="3" /></svg
+				<div class="relative w-full">
+					<video
+						bind:this={videoEl}
+						class="w-full rounded-xl object-cover"
+						style="max-height: 200px;"
+						playsinline
+					></video>
+					<!-- Flip camera button (top-right corner) -->
+					<button
+						type="button"
+						onclick={flipCamera}
+						aria-label="Đổi camera"
+						title={facingMode === 'user' ? 'Chuyển camera sau' : 'Chuyển camera trước'}
+						class="absolute top-2 right-2 flex size-9 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:bg-black/70 active:scale-90"
 					>
-				</button>
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h1"/>
+							<path d="M14 5h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/>
+							<path d="M10 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+							<path d="m19 9-2-2 2-2"/>
+							<path d="m5 15 2 2-2 2"/>
+						</svg>
+					</button>
+				</div>
+				<canvas bind:this={canvasEl} class="hidden"></canvas>
+				<!-- Capture row: stop + shutter -->
+				<div class="flex items-center gap-4">
+					<button
+						type="button"
+						onclick={stopCamera}
+						aria-label="Hủy camera"
+						class="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-red-100 hover:text-red-500 active:scale-90"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+					</button>
+					<button
+						type="button"
+						onclick={capturePhoto}
+						aria-label="Chụp ảnh"
+						class="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 active:scale-95"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg>
+					</button>
+					<!-- Spacer to center shutter -->
+					<div class="size-10"></div>
+				</div>
 			</div>
 		{/if}
 

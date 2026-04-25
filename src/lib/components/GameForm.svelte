@@ -14,9 +14,9 @@
 		rewards: IGameForm['rewards'];
 		onchange: (data: IGameForm) => void;
 		onsubmit?: () => void;
-		table: Table | undefined;
-		selectedPlayers: SelectedPlayer[];
-		onselectedplayerschange: (players: SelectedPlayer[]) => void;
+		table?: Table | undefined;
+		selectedPlayers?: SelectedPlayer[];
+		onselectedplayerschange?: (players: SelectedPlayer[]) => void;
 	};
 
 	const {
@@ -25,8 +25,8 @@
 		onchange,
 		onsubmit,
 		table,
-		selectedPlayers,
-		onselectedplayerschange
+		selectedPlayers = [],
+		onselectedplayerschange = () => {}
 	}: Props = $props();
 
 	function updateTitle(value: string) {

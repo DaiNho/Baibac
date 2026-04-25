@@ -44,7 +44,8 @@
 		onclick={handleBackdropClick}
 	>
 		<div
-			class="animate__animated animate__zoomIn w-full max-w-sm rounded-xl bg-card p-6 shadow-2xl"
+			class="animate__animated animate__zoomIn animate__faster w-full max-w-sm rounded-xl bg-card p-6 shadow-2xl"
+		style="--animate-duration: 0.15s"
 			onclick={(e) => e.stopPropagation()}
 		>
 			<div class="mb-2 flex items-center justify-center">

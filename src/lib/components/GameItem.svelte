@@ -67,7 +67,7 @@
 			<h2 class="line-clamp-1">{title}</h2>
 		</a>
 
-		<div class="flex items-center gap-1">
+		<div class="relative z-10 flex items-center gap-1">
 			<a
 				href={`/tables/${tableId}/games/${id}/edit`}
 				class="flex size-8 items-center justify-center rounded text-muted-foreground hover:bg-yellow-50 hover:text-yellow-600"

@@ -147,6 +147,7 @@
 
 	/* ── Touch handlers ── */
 	function handleTouchStart(e: TouchEvent) {
+		if ((e.target as HTMLElement).closest('.ch-home')) return;
 		e.preventDefault();
 
 		// If done phase: ignore new touches (auto-reset will happen on touchend)
@@ -172,6 +173,7 @@
 	}
 
 	function handleTouchMove(e: TouchEvent) {
+		if ((e.target as HTMLElement).closest('.ch-home')) return;
 		e.preventDefault();
 		if (phase === 'done') return;
 		for (const t of e.touches) {
@@ -183,6 +185,7 @@
 	}
 
 	function handleTouchEnd(e: TouchEvent) {
+		if ((e.target as HTMLElement).closest('.ch-home')) return;
 		e.preventDefault();
 
 		// Always remove lifted fingers from our map
@@ -222,6 +225,7 @@
 	}
 
 	function handleTouchCancel(e: TouchEvent) {
+		if ((e.target as HTMLElement).closest('.ch-home')) return;
 		for (const t of e.changedTouches) {
 			touches.delete(t.identifier);
 			removeDot(t.identifier);

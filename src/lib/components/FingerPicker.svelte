@@ -109,12 +109,19 @@
 			d.classList.add('syncing');
 		});
 
-		// After ~3s of gentle breathing, pick a random winner
+		// After ~3s of gentle breathing, smoothly hand off to winner
 		cdTimer = setTimeout(() => {
 			if (phase !== 'picking') return;
+			// Step 1: remove syncing → dot transitions back toward scale(1) via CSS transition
 			allDots().forEach((d) => d.classList.remove('syncing'));
 			const winnerId = ids[Math.floor(Math.random() * ids.length)];
-			pickWinner(winnerId, ids);
+			// Step 2: wait 2 frames so browser paints the settled position before winner anim starts
+			requestAnimationFrame(() =>
+				requestAnimationFrame(() => {
+					if (phase !== 'picking') return;
+					pickWinner(winnerId, ids);
+				})
+			);
 		}, 3000);
 	}
 
@@ -257,8 +264,13 @@
 
 {#if props.open}
 	<div class="ch-overlay" class:ch-picking={pickingFlash} bind:this={containerEl}>
-		<!-- Settings / close button (top-right, like Chooser!) -->
-		<button class="ch-close" onclick={handleClose} aria-label="Đóng">✕</button>
+		<!-- Home button – fixed top-LEFT, outside thumb zone, always reachable -->
+		<button
+			class="ch-home"
+			onclick={(e) => { e.stopPropagation(); handleClose(); }}
+			ontouchend={(e) => { e.stopPropagation(); }}
+			aria-label="Về trang chủ"
+		>🏠</button>
 
 		<!-- Idle hint – big bold white text centre -->
 		{#if showHint}
@@ -293,31 +305,31 @@
 		filter: brightness(1.06);
 	}
 
-	/* ── Close / settings button ── */
-	.ch-close {
+	/* ── Home button – top-LEFT corner ── */
+	.ch-home {
 		position: fixed;
-		top: 54px;
-		right: 20px;
-		z-index: 10010;
-		width: 40px;
-		height: 40px;
+		top: 52px;
+		left: 20px;
+		z-index: 10020;
+		width: 44px;
+		height: 44px;
 		border-radius: 50%;
-		background: rgba(0, 0, 0, 0.18);
+		background: rgba(0, 0, 0, 0.22);
 		border: none;
-		color: rgba(255, 255, 255, 0.9);
-		font-size: 16px;
-		font-weight: 700;
+		font-size: 20px;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		pointer-events: all;
+		touch-action: manipulation;
 		transition:
 			background 0.15s,
 			transform 0.1s;
 	}
-	.ch-close:active {
-		background: rgba(0, 0, 0, 0.32);
-		transform: scale(0.9);
+	.ch-home:active {
+		background: rgba(0, 0, 0, 0.38);
+		transform: scale(0.88);
 	}
 
 	/* ── Idle big text ── */
@@ -446,61 +458,45 @@
 		animation: ch-pulse 1s ease-out infinite;
 	}
 
-	/* ── Syncing breathe: slow, visible, graceful ── */
-	@keyframes -global-ch-syncing {
-		0% {
-			transform: translate(-50%, -50%) scale(1);
-			opacity: 1;
-		}
-		40% {
-			transform: translate(-50%, -50%) scale(0.78);
-			opacity: 0.55;
-		}
-		60% {
-			transform: translate(-50%, -50%) scale(0.78);
-			opacity: 0.55;
-		}
-		100% {
-			transform: translate(-50%, -50%) scale(1);
-			opacity: 1;
+	/* ── Syncing breathe: true sine-wave via alternate direction ── */
+	/*
+	   Only 2 keyframes + alternate = pure smooth oscillation.
+	   No plateau, no jerky hold. ease-in-out on both forward & reverse = sine wave.
+	*/
+	@keyframes -global-ch-breathe {
+		to {
+			transform: translate(-50%, -50%) scale(0.82);
+			opacity: 0.5;
 		}
 	}
 	:global(.ch-dot.syncing) {
-		animation: ch-syncing 1.1s ease-in-out infinite;
-		transition: none !important;
+		animation: ch-breathe 1.3s ease-in-out infinite alternate;
+		/* No transition:none – let class removal be smooth */
 	}
 
-	/* ── Winner: gentle grow over 1.2s ── */
+	/* ── Winner: spring settle – natural overshoot ── */
+	/*
+	   2-keyframe + spring cubic-bezier = smoothest feel.
+	   cubic-bezier(0.34,1.56,0.64,1) = slight overshoot then settle naturally.
+	*/
 	@keyframes -global-ch-win {
-		0% {
-			transform: translate(-50%, -50%) scale(1);
-		}
-		35% {
-			transform: translate(-50%, -50%) scale(1.15);
-		}
-		60% {
-			transform: translate(-50%, -50%) scale(1.42);
-		}
-		80% {
-			transform: translate(-50%, -50%) scale(1.38);
-		}
-		100% {
-			transform: translate(-50%, -50%) scale(1.4);
-		}
+		from { transform: translate(-50%, -50%) scale(1);    }
+		to   { transform: translate(-50%, -50%) scale(1.42); }
 	}
 	:global(.ch-dot.winner) {
-		animation: ch-win 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+		animation: ch-win 1.0s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 		z-index: 20;
 	}
 	:global(.ch-dot.winner .ch-ring) {
 		background: #fff;
 		box-shadow:
-			0 10px 60px rgba(255, 255, 255, 0.5),
+			0 12px 64px rgba(255, 255, 255, 0.55),
 			0 4px 24px rgba(0, 0, 0, 0.1);
 	}
 	:global(.ch-dot.winner .ch-inner) {
 		inset: 0;
 		background: #fff;
+		/* .ch-inner transition (0.5s ease) handles the fill smoothly */
 	}
 
 	/* ── Loser: gentle shrink & fade ── */

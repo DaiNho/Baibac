@@ -141,16 +141,12 @@
 	function handleTouchStart(e: TouchEvent) {
 		e.preventDefault();
 
-		if (phase === 'done') {
-			allDots().forEach(d => d.remove());
-			touches.clear();
-			showLabel = false;
-			showHint = true;
-			phase = 'idle';
-			return;
-		}
+		// If done phase: ignore new touches (auto-reset will happen on touchend)
+		if (phase === 'done') return;
 
 		for (const t of e.changedTouches) {
+			// Remove stale dot if id was recycled by the browser
+			if (touches.has(t.identifier)) removeDot(t.identifier);
 			touches.set(t.identifier, { x: t.clientX, y: t.clientY });
 			createDot(t.identifier, t.clientX, t.clientY);
 		}
@@ -180,13 +176,30 @@
 
 	function handleTouchEnd(e: TouchEvent) {
 		e.preventDefault();
-		if (phase === 'done') return;
-		const wasActive = phase === 'countdown' || phase === 'picking';
 
+		// Always remove lifted fingers from our map
 		for (const t of e.changedTouches) {
 			touches.delete(t.identifier);
+		}
+
+		if (phase === 'done') {
+			// Auto-reset as soon as ALL fingers are lifted
+			if (e.touches.length === 0) {
+				allDots().forEach(d => d.remove());
+				touches.clear();
+				showLabel = false;
+				showHint = true;
+				phase = 'idle';
+			}
+			return;
+		}
+
+		// Remove the dot for each lifted finger
+		for (const t of e.changedTouches) {
 			removeDot(t.identifier);
 		}
+
+		const wasActive = phase === 'countdown' || phase === 'picking';
 		if (wasActive) {
 			allDots().forEach(d => { d.className = 'ch-dot in'; });
 			reset();

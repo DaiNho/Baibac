@@ -268,7 +268,10 @@
 		<button
 			class="ch-home"
 			onclick={(e) => { e.stopPropagation(); handleClose(); }}
+			ontouchstart={(e) => { e.stopPropagation(); }}
+			ontouchmove={(e) => { e.stopPropagation(); }}
 			ontouchend={(e) => { e.stopPropagation(); }}
+			ontouchcancel={(e) => { e.stopPropagation(); }}
 			aria-label="Về trang chủ"
 		>🏠</button>
 
@@ -308,8 +311,8 @@
 	/* ── Home button – top-LEFT corner ── */
 	.ch-home {
 		position: fixed;
-		top: 52px;
-		left: 20px;
+		top: max(16px, env(safe-area-inset-top, 16px));
+		left: 16px;
 		z-index: 10020;
 		width: 44px;
 		height: 44px;
@@ -470,7 +473,7 @@
 		}
 	}
 	:global(.ch-dot.syncing) {
-		animation: ch-breathe 1.3s ease-in-out infinite alternate;
+		animation: ch-breathe 0.8s ease-in-out infinite alternate;
 		/* No transition:none – let class removal be smooth */
 	}
 

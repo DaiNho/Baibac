@@ -90,44 +90,19 @@
 		vib([0, 80, 40, 80, 40, 120]);
 
 		const ids = Array.from(touches.keys());
-		let remaining = [...ids];
 
-		// Sync-start all dots at exact same animation phase
-		const syncDelay = `-${(performance.now() % 520).toFixed(0)}ms`;
+		// All dots blink together in perfect sync
 		allDots().forEach(d => {
-			(d as HTMLElement).style.animationDelay = syncDelay;
 			d.classList.add('syncing');
 		});
 
-		// After 1.4s of synchronized blinking, start eliminating one by one
-		function eliminateNext() {
+		// After ~2.5s of gentle blinking, pick a random winner
+		cdTimer = setTimeout(() => {
 			if (phase !== 'picking') return;
-
-			if (remaining.length <= 1) {
-				// Only winner remains
-				allDots().forEach(d => d.classList.remove('syncing'));
-				pickWinner(remaining[0], ids);
-				return;
-			}
-
-			// Pick random loser
-			const idx = Math.floor(Math.random() * remaining.length);
-			const removeId = remaining.splice(idx, 1)[0];
-			const el = document.getElementById('ch-dot-' + removeId);
-			if (el) {
-				el.classList.remove('syncing');
-				el.classList.add('loser');
-				setTimeout(() => el.remove(), 420);
-			}
-			vib([35]);
-
-			// Slightly accelerate each elimination
-			const eliminated = ids.length - remaining.length;
-			const delay = Math.max(160, 420 - eliminated * 30);
-			cdTimer = setTimeout(eliminateNext, delay);
-		}
-
-		cdTimer = setTimeout(eliminateNext, 1400);
+			allDots().forEach(d => d.classList.remove('syncing'));
+			const winnerId = ids[Math.floor(Math.random() * ids.length)];
+			pickWinner(winnerId, ids);
+		}, 2500);
 	}
 
 	function pickWinner(winnerId: number, ids: number[]) {
@@ -437,15 +412,15 @@
 	animation: ch-pulse 0.85s ease-out infinite;
 }
 
-/* ── Synchronized blink: all dots flash together ── */
+/* ── Synchronized blink: all dots breathe together ── */
 @keyframes -global-ch-syncing {
-	0%   { transform: translate(-50%,-50%) scale(1);    }
-	40%  { transform: translate(-50%,-50%) scale(1.07); }
-	60%  { transform: translate(-50%,-50%) scale(1.07); }
-	100% { transform: translate(-50%,-50%) scale(1);    }
+	0%   { transform: translate(-50%,-50%) scale(1);    opacity: 1;   }
+	45%  { transform: translate(-50%,-50%) scale(1.10); opacity: 0.8; }
+	55%  { transform: translate(-50%,-50%) scale(1.10); opacity: 0.8; }
+	100% { transform: translate(-50%,-50%) scale(1);    opacity: 1;   }
 }
 :global(.ch-dot.syncing) {
-	animation: ch-syncing 0.52s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	animation: ch-syncing 0.9s ease-in-out infinite;
 	transition: none !important;
 }
 :global(.ch-dot.syncing .ch-inner) {

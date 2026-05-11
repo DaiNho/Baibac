@@ -1,7 +1,7 @@
 <script lang="ts">
 	const props: { open: boolean; onclose: () => void } = $props();
 
-	let containerEl: HTMLDivElement | null = null;
+	let containerEl: HTMLDivElement | null = $state(null);
 
 	const COLORS = [
 		{ bg: '#5B8DEF', glow: 'rgba(91,141,239,0.55)' },
@@ -26,11 +26,11 @@
 	let cdTimer: ReturnType<typeof setTimeout> | null = null;
 	let cdVal = 3;
 	let usedColors = new Set<number>();
-	let cdText = '';
-	let showCd = false;
-	let showStatus = false;
-	let showLabel = false;
-	let showHint = true;
+	let cdText = $state('');
+	let showCd = $state(false);
+	let showStatus = $state(false);
+	let showLabel = $state(false);
+	let showHint = $state(true);
 
 	function pickColor() {
 		if (usedColors.size >= COLORS.length) usedColors.clear();

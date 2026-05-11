@@ -96,13 +96,13 @@
 			d.classList.add('syncing');
 		});
 
-		// After ~2.5s of gentle blinking, pick a random winner
+		// After ~3s of gentle breathing, pick a random winner
 		cdTimer = setTimeout(() => {
 			if (phase !== 'picking') return;
 			allDots().forEach(d => d.classList.remove('syncing'));
 			const winnerId = ids[Math.floor(Math.random() * ids.length)];
 			pickWinner(winnerId, ids);
-		}, 2500);
+		}, 3000);
 	}
 
 	function pickWinner(winnerId: number, ids: number[]) {
@@ -361,13 +361,10 @@
 
 /* ════════════════════════════════
    DOTS  –  injected dynamically
-   Exact Chooser! look:
-   thick white ring + pale pink fill
 ════════════════════════════════ */
 :global(.ch-dot) {
 	position: absolute;
-	/* size: ring 14px + inner 130px → total 158px */
-	width:  158px;
+	width: 158px;
 	height: 158px;
 	border-radius: 50%;
 	transform: translate(-50%, -50%) scale(0.15);
@@ -375,8 +372,8 @@
 	pointer-events: none;
 	will-change: transform, opacity;
 	transition:
-		transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-		opacity   0.25s ease;
+		transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+		opacity 0.3s ease;
 	z-index: 5;
 }
 :global(.ch-dot.in) {
@@ -390,72 +387,84 @@
 	inset: 0;
 	border-radius: 50%;
 	background: #fff;
-	box-shadow: 0 6px 32px rgba(0,0,0,0.18);
+	box-shadow: 0 6px 32px rgba(0, 0, 0, 0.18);
+	transition: box-shadow 0.6s ease;
 }
 
-/* Pale-pink / cream inner fill (mimics Chooser! exactly) */
+/* Pale-pink / cream inner fill */
 :global(.ch-inner) {
 	position: absolute;
-	inset: 14px;           /* ring thickness */
+	inset: 14px;
 	border-radius: 50%;
 	background: rgba(255, 220, 205, 0.88);
-	transition: inset 0.2s, background 0.2s;
+	transition:
+		inset 0.5s ease,
+		background 0.5s ease;
 }
 
 /* ── Pulsing (countdown hold) ── */
 @keyframes -global-ch-pulse {
-	0%   { box-shadow: 0 6px 32px rgba(0,0,0,0.18), 0 0 0 0 rgba(255,255,255,0.7); }
-	65%  { box-shadow: 0 6px 32px rgba(0,0,0,0.18), 0 0 0 20px rgba(255,255,255,0); }
-	100% { box-shadow: 0 6px 32px rgba(0,0,0,0.18), 0 0 0 0 rgba(255,255,255,0); }
+	0% {
+		box-shadow:
+			0 6px 32px rgba(0, 0, 0, 0.18),
+			0 0 0 0 rgba(255, 255, 255, 0.6);
+	}
+	65% {
+		box-shadow:
+			0 6px 32px rgba(0, 0, 0, 0.18),
+			0 0 0 22px rgba(255, 255, 255, 0);
+	}
+	100% {
+		box-shadow:
+			0 6px 32px rgba(0, 0, 0, 0.18),
+			0 0 0 0 rgba(255, 255, 255, 0);
+	}
 }
 :global(.ch-dot.pulsing .ch-ring) {
-	animation: ch-pulse 0.85s ease-out infinite;
+	animation: ch-pulse 1s ease-out infinite;
 }
 
-/* ── Synchronized blink: all dots breathe together ── */
+/* ── Syncing breathe: slow, visible, graceful ── */
 @keyframes -global-ch-syncing {
-	0%   { transform: translate(-50%,-50%) scale(1);    opacity: 1;   }
-	45%  { transform: translate(-50%,-50%) scale(1.10); opacity: 0.8; }
-	55%  { transform: translate(-50%,-50%) scale(1.10); opacity: 0.8; }
-	100% { transform: translate(-50%,-50%) scale(1);    opacity: 1;   }
+	0%   { transform: translate(-50%,-50%) scale(1);    opacity: 1;    }
+	40%  { transform: translate(-50%,-50%) scale(0.78); opacity: 0.55; }
+	60%  { transform: translate(-50%,-50%) scale(0.78); opacity: 0.55; }
+	100% { transform: translate(-50%,-50%) scale(1);    opacity: 1;    }
 }
 :global(.ch-dot.syncing) {
-	animation: ch-syncing 0.9s ease-in-out infinite;
-	transition: none !important;
-}
-:global(.ch-dot.syncing .ch-inner) {
-	background: rgba(255, 210, 195, 0.95);
+	animation: ch-syncing 1.1s ease-in-out infinite;
 	transition: none !important;
 }
 
-/* ── Winner: shrink ring to 0, full white ── */
+/* ── Winner: gentle grow over 1.2s ── */
 @keyframes -global-ch-win {
-	0%   { transform: translate(-50%,-50%) scale(1.12); }
-	40%  { transform: translate(-50%,-50%) scale(1.6);  }
-	70%  { transform: translate(-50%,-50%) scale(1.48); }
-	100% { transform: translate(-50%,-50%) scale(1.52); }
+	0%   { transform: translate(-50%,-50%) scale(1);   }
+	35%  { transform: translate(-50%,-50%) scale(1.15); }
+	60%  { transform: translate(-50%,-50%) scale(1.42); }
+	80%  { transform: translate(-50%,-50%) scale(1.38); }
+	100% { transform: translate(-50%,-50%) scale(1.4);  }
 }
 :global(.ch-dot.winner) {
-	animation: ch-win 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+	animation: ch-win 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 	z-index: 20;
 }
-/* ring and inner merge into solid white */
 :global(.ch-dot.winner .ch-ring) {
 	background: #fff;
-	box-shadow: 0 10px 60px rgba(255,255,255,0.55), 0 4px 24px rgba(0,0,0,0.12);
+	box-shadow:
+		0 10px 60px rgba(255, 255, 255, 0.5),
+		0 4px 24px rgba(0, 0, 0, 0.1);
 }
 :global(.ch-dot.winner .ch-inner) {
-	inset: 0;             /* fill entirely → dot becomes pure white */
+	inset: 0;
 	background: #fff;
-	transition: inset 0.3s ease, background 0.3s ease;
 }
 
-/* ── Loser: shrink & vanish ── */
+/* ── Loser: gentle shrink & fade ── */
 :global(.ch-dot.loser) {
 	transition:
-		transform 0.32s ease,
-		opacity   0.32s ease !important;
-	transform: translate(-50%,-50%) scale(0.08) !important;
+		transform 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+		opacity  0.5s ease !important;
+	transform: translate(-50%,-50%) scale(0.05) !important;
 	opacity: 0 !important;
 }
 </style>

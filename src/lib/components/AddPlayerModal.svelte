@@ -10,7 +10,7 @@
 
 	let { open, onClose, onAdd, existingPlayers }: Props = $props();
 
-	let step: 'form' | 'camera' = $state('form');
+	let step: 'form' | 'camera' | 'select' = $state('form');
 	let name = $state('');
 	let capturedImage = $state<string | null>(null);
 	let videoEl: HTMLVideoElement | undefined = $state();

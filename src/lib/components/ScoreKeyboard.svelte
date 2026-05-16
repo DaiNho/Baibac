@@ -23,6 +23,7 @@
 			return {
 				...p,
 				avatar: playerWithAvatar?.avatar ?? '',
+				playerSource: playerWithAvatar?.playerSource ?? 'typed',
 				reward: game.rewards[i]
 			};
 		});

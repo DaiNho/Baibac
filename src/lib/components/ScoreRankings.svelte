@@ -9,9 +9,10 @@
 
 	interface Props {
 		items: IScoreRankings[];
+		onPlayerClick?: (item: IScoreRankings) => void;
 	}
 
-	let { items }: Props = $props();
+	let { items, onPlayerClick }: Props = $props();
 
 	// Cache for funny avatars: key = `${playerSource}:${name}` to avoid name collisions
 	const funnyAvatarCache = new Map<string, string>();
@@ -260,37 +261,57 @@
 						{#if activeBubble === 'rank2' && items[3]}
 							<div class="speech-bubble speech-bubble--lime">{bubbles.rank2[bubbleIndex]}</div>
 						{/if}
-						<img src={getAvatarForItem(item)} alt={item.name} class="size-16 rounded-full object-cover" />
-						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground">{item.name}</span>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<img src={getAvatarForItem(item)} alt={item.name} class="size-16 rounded-full object-cover {onPlayerClick ? 'cursor-pointer hover:ring-2 hover:ring-primary transition-all' : ''}" onclick={() => onPlayerClick?.(item)} />
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground {onPlayerClick ? 'cursor-pointer hover:text-primary transition-colors' : ''}" onclick={() => onPlayerClick?.(item)}>{item.name}</span>
 						<span class="text-sm font-bold text-lime-500">{item.total}</span>
 					{:else if i === 0}
 						<CrownIcon class="size-4 text-yellow-400" />
 						{#if activeBubble === 'rank1' && items[3]}
 							<div class="speech-bubble speech-bubble--green">{bubbles.rank1[bubbleIndex]}</div>
 						{/if}
-						<img bind:this={rank1IconEl} src={getAvatarForItem(item)} alt={item.name} class="throw-1 size-16 rounded-full object-cover" />
-						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground">{item.name}</span>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<img bind:this={rank1IconEl} src={getAvatarForItem(item)} alt={item.name} class="throw-1 size-16 rounded-full object-cover {onPlayerClick ? 'cursor-pointer hover:ring-2 hover:ring-primary transition-all' : ''}" onclick={() => onPlayerClick?.(item)} />
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground {onPlayerClick ? 'cursor-pointer hover:text-primary transition-colors' : ''}" onclick={() => onPlayerClick?.(item)}>{item.name}</span>
 						<span class="text-sm font-bold text-green-500">{item.total}</span>
 					{:else if i === 2}
 						{#if activeBubble === 'rank3' && items[3]}
 							<div class="speech-bubble speech-bubble--yellow">{bubbles.rank3[bubbleIndex]}</div>
 						{/if}
-						<img src={getAvatarForItem(item)} alt={item.name} class="size-16 rounded-full object-cover" />
-						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground">{item.name}</span>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<img src={getAvatarForItem(item)} alt={item.name} class="size-16 rounded-full object-cover {onPlayerClick ? 'cursor-pointer hover:ring-2 hover:ring-primary transition-all' : ''}" onclick={() => onPlayerClick?.(item)} />
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground {onPlayerClick ? 'cursor-pointer hover:text-primary transition-colors' : ''}" onclick={() => onPlayerClick?.(item)}>{item.name}</span>
 						<span class="text-sm font-bold text-yellow-500">{item.total}</span>
 					{:else if i === 3}
 						{#if activeBubble === 'rank4'}
 							<div class="speech-bubble speech-bubble--orange">{bubbles.rank4[bubbleIndex]}</div>
 						{/if}
-						<img bind:this={rank4IconEl} src={getAvatarForItem(item)} alt={item.name} class="loser-wobble size-16 rounded-full object-cover" />
-						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground">{item.name}</span>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<img bind:this={rank4IconEl} src={getAvatarForItem(item)} alt={item.name} class="loser-wobble size-16 rounded-full object-cover {onPlayerClick ? 'cursor-pointer hover:ring-2 hover:ring-primary transition-all' : ''}" onclick={() => onPlayerClick?.(item)} />
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground {onPlayerClick ? 'cursor-pointer hover:text-primary transition-colors' : ''}" onclick={() => onPlayerClick?.(item)}>{item.name}</span>
 						<span class="text-sm font-bold text-orange-400">{item.total}</span>
 					{:else if i === 4}
 						{#if activeBubble === 'rank5'}
 							<div class="speech-bubble speech-bubble--red">{bubbles.rank5[bubbleIndex]}</div>
 						{/if}
-						<img bind:this={rank5IconEl} src={getAvatarForItem(item)} alt={item.name} class="loser-wobble size-16 rounded-full object-cover" />
-						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground">{item.name}</span>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<img bind:this={rank5IconEl} src={getAvatarForItem(item)} alt={item.name} class="loser-wobble size-16 rounded-full object-cover {onPlayerClick ? 'cursor-pointer hover:ring-2 hover:ring-primary transition-all' : ''}" onclick={() => onPlayerClick?.(item)} />
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<span class="mt-0.5 truncate max-w-16 text-xs font-medium capitalize text-muted-foreground {onPlayerClick ? 'cursor-pointer hover:text-primary transition-colors' : ''}" onclick={() => onPlayerClick?.(item)}>{item.name}</span>
 						<span class="text-sm font-bold text-red-400">{item.total}</span>
 					{/if}
 				</div>
@@ -313,9 +334,11 @@
 			]}
 			animate:flip={{ duration: 500 }}
 		>
-			<img src={getAvatarForItem(item)} alt={item.name} class="size-8 shrink-0 rounded-full object-cover" />
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<img src={getAvatarForItem(item)} alt={item.name} class="size-8 shrink-0 rounded-full object-cover {onPlayerClick ? 'cursor-pointer hover:ring-2 hover:ring-primary transition-all' : ''}" onclick={() => onPlayerClick?.(item)} />
 			<span class="w-4 shrink-0 text-center font-semibold">{i + 6}</span>
-			<span class="flex-1 line-clamp-1 capitalize font-medium">{item.name}</span>
+			<span class="flex-1 line-clamp-1 capitalize font-medium {onPlayerClick ? 'cursor-pointer hover:text-primary transition-colors' : ''}" onclick={() => onPlayerClick?.(item)}>{item.name}</span>
 			{#if isLast}
 				<span class="animate-pulse text-[10px] text-red-400">💀 Bèo nhất bàn!</span>
 			{:else}
